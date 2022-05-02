@@ -5,13 +5,13 @@ import (
 	"time"
 )
 
-type WebJwt struct {
+type WebJwtRealize struct {
 	SigningKey  string
 	ExpiresTime int64
 }
 
-func NewWebJwt(signingKey string, expiresTime int64) *WebJwt {
-	webJwt := &WebJwt{
+func NewWebJwt(signingKey string, expiresTime int64) *WebJwtRealize {
+	webJwt := &WebJwtRealize{
 		SigningKey:  signingKey,
 		ExpiresTime: expiresTime,
 	}
@@ -21,7 +21,7 @@ func NewWebJwt(signingKey string, expiresTime int64) *WebJwt {
 /**
 更加用户信息获取token
 */
-func (webJwt *WebJwt) GetToken(userInfo map[string]interface{}) (string, error) {
+func (webJwt *WebJwtRealize) GetToken(userInfo map[string]interface{}) (string, error) {
 	claims := Claims{
 		UserInfo: userInfo,
 		StandardClaims: jwt.StandardClaims{
@@ -37,7 +37,7 @@ func (webJwt *WebJwt) GetToken(userInfo map[string]interface{}) (string, error) 
 /**
 创建token
 */
-func (webJwt *WebJwt) createToken(claims Claims) (string, error) {
+func (webJwt *WebJwtRealize) createToken(claims Claims) (string, error) {
 	newWithToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	token, error := newWithToken.SignedString(webJwt.getSigningKey())
 	return token, error
@@ -47,7 +47,7 @@ func (webJwt *WebJwt) createToken(claims Claims) (string, error) {
 /**
 解析token
 */
-func (webJwt *WebJwt) ParseToken(tokenString string) (*Claims, error) {
+func (webJwt *WebJwtRealize) ParseToken(tokenString string) (*Claims, error) {
 	tokenClaims, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		// since we only use the one private key to sign the tokens,
 		// we also only use its public counter part to verify
@@ -80,7 +80,7 @@ func (webJwt *WebJwt) ParseToken(tokenString string) (*Claims, error) {
 /**
 获取加密串
 */
-func (webJwt *WebJwt) getSigningKey() []byte {
+func (webJwt *WebJwtRealize) getSigningKey() []byte {
 	var jwtSigningKey = []byte(webJwt.SigningKey)
 	return jwtSigningKey
 }
