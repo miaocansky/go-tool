@@ -2,6 +2,11 @@ package webjwt
 
 import "testing"
 
+//
+//  TestNewWebJwt
+//  @Description: token生成
+//  @param t
+//
 func TestNewWebJwt(t *testing.T) {
 
 	m := make(map[string]interface{})
@@ -19,6 +24,11 @@ func GetWebJwt() *WebJwt {
 
 }
 
+//
+//  TestParseToken
+//  @Description: 解析token 获取用户信息
+//  @param t
+//
 func TestParseToken(t *testing.T) {
 	m := make(map[string]interface{})
 	m["username"] = "test"
