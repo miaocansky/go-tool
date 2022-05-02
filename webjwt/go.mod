@@ -1,4 +1,4 @@
-module github.com/miaocansky/go-tool/web_jwt
+module github.com/miaocansky/go-tool/webjwt
 
 go 1.16
 
