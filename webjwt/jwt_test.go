@@ -16,7 +16,7 @@ func TestNewWebJwt(t *testing.T) {
 	t.Log(token)
 	t.Log(err)
 }
-func GetWebJwt() *WebJwt {
+func GetWebJwt() *WebJwtRealize {
 	signingKey := "aaaa"
 	var expiresTime int64 = 3600
 	jwt := NewWebJwt(signingKey, expiresTime)
