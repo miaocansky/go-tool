@@ -10,10 +10,29 @@ import (
 )
 
 type CaptchaTool struct {
+	Path string
 }
 
+//
+//  NewCaptchaTool
+//  @Description: 使用基础Tool
+//  @return *CaptchaTool
+//
 func NewCaptchaTool() *CaptchaTool {
 	return &CaptchaTool{}
+
+}
+
+//
+//  NewPathCaptchaTool
+//  @Description: 使用指定图片存储位置
+//  @param path
+//  @return *CaptchaTool
+//
+func NewPathCaptchaTool(path string) *CaptchaTool {
+	return &CaptchaTool{
+		Path: path,
+	}
 
 }
 
@@ -26,7 +45,7 @@ func NewCaptchaTool() *CaptchaTool {
 //  @return error
 //
 func (captchaTool *CaptchaTool) GetCaptcha(captchaType string) (string, string, error) {
-	path, err := GetPath()
+	path, err := captchaTool.GetPath()
 	if err != nil {
 		return "", "", err
 	}
@@ -95,18 +114,24 @@ func (captchaTool *CaptchaTool) GetImageByte(captchaId, ext, lang string, width,
 	return content.Bytes(), nil
 }
 
-func GetPath() (string, error) {
+func (captchaTool *CaptchaTool) GetPath() (string, error) {
 	DirPath, err := file.GetPath()
 	if err != nil {
 		return "", err
 	}
 	path := "upload/captcha/"
 	uploadParth := DirPath + "/" + path
+	if captchaTool.Path != "" && len(captchaTool.Path) > 0 {
+		uploadParth = captchaTool.Path
+	} else {
+
+	}
 	exists, _ := file.PathExists(uploadParth)
 	if !exists {
 		//  创建目录
 		_ = file.MakeDir(uploadParth)
 	}
+
 	return uploadParth, nil
 }
 
