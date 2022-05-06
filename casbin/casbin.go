@@ -49,7 +49,7 @@ func (casbinUtil *CasbinUtil) LoadPolicy() {
 
 }
 
-func (casbinUtil *CasbinUtil) AddPolicy(authorityId uint64, casbinInfos []dto.CasbinInfo) bool {
+func (casbinUtil *CasbinUtil) AddPolicy(authorityId uint64, casbinInfos []dto.CasbinInfoDto) bool {
 	var policyLists [][]string
 	if casbinInfos == nil {
 		return false
