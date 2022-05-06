@@ -11,9 +11,8 @@ type MemcachedStore struct {
 	client *memcache.Client
 }
 
-func NewMemcachedStore() *MemcachedStore {
-	adress := "127.0.0.1:32768"
-	client := memcache.New(adress)
+func NewMemcachedStore(address string) *MemcachedStore {
+	client := memcache.New(address)
 	return &MemcachedStore{
 		client: client,
 	}
