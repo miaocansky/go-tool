@@ -77,14 +77,13 @@ func (casbinUtil *CasbinUtil) Enforce(authorityId, obj, act string) bool {
 //  @param casbinInfos 权限lists
 //  @return bool
 //
-func (casbinUtil *CasbinUtil) AddPolicy(authorityId uint64, casbinInfoLists []dto.CasbinInfoDto) bool {
+func (casbinUtil *CasbinUtil) AddPolicy(authorityId string, casbinInfoLists []dto.CasbinInfoDto) bool {
 	var policyLists [][]string
 	if casbinInfoLists == nil {
 		return false
 	}
 	for _, info := range casbinInfoLists {
-		authorityIdStr := strconv.FormatUint(authorityId, 10)
-		policyLists = append(policyLists, []string{authorityIdStr, info.Path, info.Method})
+		policyLists = append(policyLists, []string{authorityId, info.Path, info.Method})
 	}
 	isAdd, _ := casbinUtil.Enforcer.AddPolicies(policyLists)
 	return isAdd
