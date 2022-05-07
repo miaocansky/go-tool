@@ -7,6 +7,7 @@ import (
 	"github.com/miaocansky/go-tool/casbin/dto"
 	"gorm.io/gorm"
 	"sync"
+	"time"
 )
 
 var (
@@ -19,6 +20,7 @@ type CasbinUtil struct {
 	ModelPath      string
 	Db             *gorm.DB
 	SyncedEnforcer *casbin.SyncedEnforcer
+	SyncedTime     time.Duration
 }
 
 func NewCasbinUtil(modelPath string, db *gorm.DB) (*CasbinUtil, error) {
@@ -37,6 +39,9 @@ func (casbinUtil *CasbinUtil) GetEnforcer() (*casbin.Enforcer, error) {
 	once.Do(func() {
 		a, _ := gormadapter.NewAdapterByDB(casbinUtil.Db)
 		syncedEnforcer, err = casbin.NewSyncedEnforcer(casbinUtil.ModelPath, a)
+		if err == nil {
+			casbinUtil.StartAutoLoadPolicy()
+		}
 		//rediswatcher.NewWatcher()
 		//rediswatcher.WithRedisPubConnection()
 	})
@@ -50,6 +55,28 @@ func (casbinUtil *CasbinUtil) LoadPolicy() {
 	casbinUtil.SyncedEnforcer.LoadPolicy()
 	//casbinUtil.Enforcer.GetAllActions()
 
+}
+
+//
+//  startAutoLoadPolicy
+//  @Description: 开启定时拉取数据库的数据
+//  @receiver casbinUtil
+//
+func (casbinUtil *CasbinUtil) StartAutoLoadPolicy() {
+	if casbinUtil.SyncedTime > 0 {
+		casbinUtil.SyncedEnforcer.StartAutoLoadPolicy(casbinUtil.SyncedTime)
+	}
+}
+
+//
+//  stopAutoLoadPolicy
+//  @Description:  停止定时拉取数据库的数据
+//  @receiver casbinUtil
+//
+func (casbinUtil *CasbinUtil) StopAutoLoadPolicy() {
+	if casbinUtil.SyncedTime > 0 {
+		casbinUtil.SyncedEnforcer.StopAutoLoadPolicy()
+	}
 }
 
 //
@@ -139,6 +166,11 @@ func (casbinUtil *CasbinUtil) GetAuthorityAllPolicy(authorityId string) []dto.Ca
 	policyStringsLists := casbinUtil.SyncedEnforcer.GetFilteredPolicy(0, authorityId)
 	policyLists := policyStringsToListsStruct(policyStringsLists)
 	return policyLists
+}
+
+func (casbinUtil *CasbinUtil) Close() {
+	casbinUtil.SyncedEnforcer = nil
+	casbinUtil.StopAutoLoadPolicy()
 }
 
 //
