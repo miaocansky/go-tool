@@ -6,7 +6,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/miaocansky/go-tool/casbin/dto"
 	"gorm.io/gorm"
-	"strconv"
 	"sync"
 )
 
@@ -106,9 +105,8 @@ func (casbinUtil *CasbinUtil) DeleteAllPolicy() bool {
 //  @param authorityId
 //  @return bool
 //
-func (casbinUtil *CasbinUtil) DeletePolicyForAuthorityId(authorityId uint64) bool {
-	authorityIdStr := strconv.FormatUint(authorityId, 10)
-	return casbinUtil.deletePolicy(0, authorityIdStr)
+func (casbinUtil *CasbinUtil) DeletePolicyForAuthorityId(authorityId string) bool {
+	return casbinUtil.deletePolicy(0, authorityId)
 }
 
 func (casbinUtil *CasbinUtil) deletePolicy(v int, p ...string) bool {
