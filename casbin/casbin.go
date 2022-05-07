@@ -10,14 +10,15 @@ import (
 )
 
 var (
-	enforcer *casbin.Enforcer
-	once     sync.Once
+	enforcer       *casbin.Enforcer
+	syncedEnforcer *casbin.SyncedEnforcer
+	once           sync.Once
 )
 
 type CasbinUtil struct {
-	ModelPath string
-	Db        *gorm.DB
-	Enforcer  *casbin.Enforcer
+	ModelPath      string
+	Db             *gorm.DB
+	SyncedEnforcer *casbin.SyncedEnforcer
 }
 
 func NewCasbinUtil(modelPath string, db *gorm.DB) (*CasbinUtil, error) {
@@ -35,17 +36,19 @@ func (casbinUtil *CasbinUtil) GetEnforcer() (*casbin.Enforcer, error) {
 	var err error
 	once.Do(func() {
 		a, _ := gormadapter.NewAdapterByDB(casbinUtil.Db)
-		enforcer, err = casbin.NewEnforcer(casbinUtil.ModelPath, a)
+		syncedEnforcer, err = casbin.NewSyncedEnforcer(casbinUtil.ModelPath, a)
+		//rediswatcher.NewWatcher()
+		//rediswatcher.WithRedisPubConnection()
 	})
-	casbinUtil.Enforcer = enforcer
+	casbinUtil.SyncedEnforcer = syncedEnforcer
 	return enforcer, err
 
 }
 
 func (casbinUtil *CasbinUtil) LoadPolicy() {
 	//casbinUtil.GetEnforcer()
-	casbinUtil.Enforcer.LoadPolicy()
-	casbinUtil.Enforcer.GetAllActions()
+	casbinUtil.SyncedEnforcer.LoadPolicy()
+	//casbinUtil.Enforcer.GetAllActions()
 
 }
 
@@ -60,7 +63,7 @@ func (casbinUtil *CasbinUtil) LoadPolicy() {
 //
 func (casbinUtil *CasbinUtil) Enforce(authorityId, obj, act string) bool {
 	//casbinUtil.GetEnforcer()
-	isEnforce, err := casbinUtil.Enforcer.Enforce(authorityId, obj, act)
+	isEnforce, err := casbinUtil.SyncedEnforcer.Enforce(authorityId, obj, act)
 	if err != nil {
 		return false
 	}
@@ -84,7 +87,7 @@ func (casbinUtil *CasbinUtil) AddPolicy(authorityId string, casbinInfoLists []dt
 	for _, info := range casbinInfoLists {
 		policyLists = append(policyLists, []string{authorityId, info.Path, info.Method})
 	}
-	isAdd, _ := casbinUtil.Enforcer.AddPolicies(policyLists)
+	isAdd, _ := casbinUtil.SyncedEnforcer.AddPolicies(policyLists)
 	return isAdd
 }
 
@@ -110,7 +113,7 @@ func (casbinUtil *CasbinUtil) DeletePolicyForAuthorityId(authorityId string) boo
 }
 
 func (casbinUtil *CasbinUtil) deletePolicy(v int, p ...string) bool {
-	isDel, _ := casbinUtil.Enforcer.RemoveFilteredPolicy(v, p...)
+	isDel, _ := casbinUtil.SyncedEnforcer.RemoveFilteredPolicy(v, p...)
 	return isDel
 }
 
@@ -120,7 +123,7 @@ func (casbinUtil *CasbinUtil) deletePolicy(v int, p ...string) bool {
 //  @receiver casbinUtil
 //
 func (casbinUtil *CasbinUtil) GetAllPolicy() []dto.CasbinInfoDto {
-	policyStringsLists := casbinUtil.Enforcer.GetPolicy()
+	policyStringsLists := casbinUtil.SyncedEnforcer.GetPolicy()
 	policyLists := policyStringsToListsStruct(policyStringsLists)
 	return policyLists
 }
@@ -133,7 +136,7 @@ func (casbinUtil *CasbinUtil) GetAllPolicy() []dto.CasbinInfoDto {
 //
 func (casbinUtil *CasbinUtil) GetAuthorityAllPolicy(authorityId string) []dto.CasbinInfoDto {
 
-	policyStringsLists := casbinUtil.Enforcer.GetFilteredPolicy(0, authorityId)
+	policyStringsLists := casbinUtil.SyncedEnforcer.GetFilteredPolicy(0, authorityId)
 	policyLists := policyStringsToListsStruct(policyStringsLists)
 	return policyLists
 }
