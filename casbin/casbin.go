@@ -49,6 +49,25 @@ func (casbinUtil *CasbinUtil) LoadPolicy() {
 
 }
 
+//
+//  Enforce
+//  @Description: 验证用户是否有权限
+//  @receiver casbinUtil
+//  @param authorityId 角色id
+//  @param obj 请求地址
+//  @param act 请求方法 POST GET
+//  @return bool  是否有权限
+//
+func (casbinUtil *CasbinUtil) Enforce(authorityId, obj, act string) bool {
+	//casbinUtil.GetEnforcer()
+	isEnforce, err := casbinUtil.Enforcer.Enforce(authorityId, obj, act)
+	if err != nil {
+		return false
+	}
+	return isEnforce
+
+}
+
 func (casbinUtil *CasbinUtil) AddPolicy(authorityId uint64, casbinInfos []dto.CasbinInfoDto) bool {
 	var policyLists [][]string
 	if casbinInfos == nil {
