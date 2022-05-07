@@ -46,6 +46,7 @@ func (casbinUtil *CasbinUtil) GetEnforcer() (*casbin.Enforcer, error) {
 func (casbinUtil *CasbinUtil) LoadPolicy() {
 	//casbinUtil.GetEnforcer()
 	casbinUtil.Enforcer.LoadPolicy()
+	casbinUtil.Enforcer.GetAllActions()
 
 }
 
@@ -68,28 +69,97 @@ func (casbinUtil *CasbinUtil) Enforce(authorityId, obj, act string) bool {
 
 }
 
-func (casbinUtil *CasbinUtil) AddPolicy(authorityId uint64, casbinInfos []dto.CasbinInfoDto) bool {
+//
+//  AddPolicy
+//  @Description: 添加一个角色多个权限
+//  @receiver casbinUtil
+//  @param authorityId 权限id
+//  @param casbinInfos 权限lists
+//  @return bool
+//
+func (casbinUtil *CasbinUtil) AddPolicy(authorityId uint64, casbinInfoLists []dto.CasbinInfoDto) bool {
 	var policyLists [][]string
-	if casbinInfos == nil {
+	if casbinInfoLists == nil {
 		return false
 	}
-	for _, info := range casbinInfos {
+	for _, info := range casbinInfoLists {
 		authorityIdStr := strconv.FormatUint(authorityId, 10)
 		policyLists = append(policyLists, []string{authorityIdStr, info.Path, info.Method})
 	}
 	isAdd, _ := casbinUtil.Enforcer.AddPolicies(policyLists)
 	return isAdd
 }
+
+//
+//  DeleteAllPolicy
+//  @Description: 删除所有权限
+//  @receiver casbinUtil
+//  @return bool
+//
 func (casbinUtil *CasbinUtil) DeleteAllPolicy() bool {
-	return casbinUtil.DeletePolicy(0)
+	return casbinUtil.deletePolicy(0)
 }
 
+//
+//  DeletePolicyForAuthorityId
+//  @Description: 删除某个角色的全部权限
+//  @receiver casbinUtil
+//  @param authorityId
+//  @return bool
+//
 func (casbinUtil *CasbinUtil) DeletePolicyForAuthorityId(authorityId uint64) bool {
 	authorityIdStr := strconv.FormatUint(authorityId, 10)
-	return casbinUtil.DeletePolicy(0, authorityIdStr)
+	return casbinUtil.deletePolicy(0, authorityIdStr)
 }
 
-func (casbinUtil *CasbinUtil) DeletePolicy(v int, p ...string) bool {
+func (casbinUtil *CasbinUtil) deletePolicy(v int, p ...string) bool {
 	isDel, _ := casbinUtil.Enforcer.RemoveFilteredPolicy(v, p...)
 	return isDel
+}
+
+//
+//  GetAllPolicy
+//  @Description: 获取所有的权限
+//  @receiver casbinUtil
+//
+func (casbinUtil *CasbinUtil) GetAllPolicy() []dto.CasbinInfoDto {
+	policyStringsLists := casbinUtil.Enforcer.GetPolicy()
+	policyLists := policyStringsToListsStruct(policyStringsLists)
+	return policyLists
+}
+
+//
+//  GetAuthorityAllPolicy
+//  @Description: 获取某个角色id的所有权限
+//  @receiver casbinUtil
+//  @param authorityId
+//
+func (casbinUtil *CasbinUtil) GetAuthorityAllPolicy(authorityId string) []dto.CasbinInfoDto {
+
+	policyStringsLists := casbinUtil.Enforcer.GetFilteredPolicy(0, authorityId)
+	policyLists := policyStringsToListsStruct(policyStringsLists)
+	return policyLists
+}
+
+//
+//  policyStringsToListsStruct
+//  @Description: [][]string  转化  []dto.CasbinInfoDto
+//  @param policyStringsLists 权限数据
+//  @return []dto.CasbinInfoDto
+//
+func policyStringsToListsStruct(policyStringsLists [][]string) []dto.CasbinInfoDto {
+	policyLists := make([]dto.CasbinInfoDto, 0, 16)
+	if len(policyStringsLists) > 0 {
+		for _, policyStrings := range policyStringsLists {
+			c1 := dto.CasbinInfoDto{}
+			//list[0]
+			c1.Method = policyStrings[2]
+			c1.Path = policyStrings[1]
+			c1.AuthorityId = policyStrings[0]
+
+			policyLists = append(policyLists, c1)
+		}
+	}
+	return policyLists
+
 }
