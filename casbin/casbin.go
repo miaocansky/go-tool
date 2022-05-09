@@ -59,7 +59,7 @@ func (casbinUtil *CasbinUtil) LoadPolicy() {
 
 //
 //  startAutoLoadPolicy
-//  @Description: 开启定时拉取数据库的数据
+//  @Description: 开启定时拉取数据库的数据(用于定时更新casbin缓存中的数据)
 //  @receiver casbinUtil
 //
 func (casbinUtil *CasbinUtil) StartAutoLoadPolicy() {
@@ -70,7 +70,7 @@ func (casbinUtil *CasbinUtil) StartAutoLoadPolicy() {
 
 //
 //  stopAutoLoadPolicy
-//  @Description:  停止定时拉取数据库的数据
+//  @Description:  停止定时拉取数据库的数据(关闭定时更新casbin缓存中的数据)
 //  @receiver casbinUtil
 //
 func (casbinUtil *CasbinUtil) StopAutoLoadPolicy() {
