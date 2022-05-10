@@ -22,6 +22,7 @@ func TestRegister(t *testing.T) {
 	Register("zap", zap.NewZapUtil(config))
 	i := 1
 	//for i := 0; i < 5000; i++ {
+	DefaultDriver().Info("onemsg")
 	DefaultDriver().Info("msg", Ang("test=>", "msg:"+strconv.Itoa(i)))
 	DefaultDriver().Error("msg", Ang("test=>", "msg:"+strconv.Itoa(i)))
 	DefaultDriver().Debug("msg", Ang("test=>", "msg:"+strconv.Itoa(i)))

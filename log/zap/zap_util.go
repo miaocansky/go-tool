@@ -29,16 +29,25 @@ func NewZapUtil(config ZapConfig) *ZapUtil {
 	util.Zap = NewZap()
 	return util
 }
-func (zapUtil *ZapUtil) Error(msg string, loggerData dto.LoggerData) {
-	zapUtil.Zap.Error(msg, zap.Any(loggerData.Key, loggerData.Value))
+func (zapUtil *ZapUtil) Error(msg string, loggerDataLists ...dto.LoggerData) {
+
+	zapUtil.Zap.Error(msg, ExchangeDataToFields(loggerDataLists)...)
 }
-func (zapUtil *ZapUtil) Info(msg string, loggerData dto.LoggerData) {
-	zapUtil.Zap.Info(msg, zap.Any(loggerData.Key, loggerData.Value))
+func (zapUtil *ZapUtil) Info(msg string, loggerDataLists ...dto.LoggerData) {
+	zapUtil.Zap.Info(msg, ExchangeDataToFields(loggerDataLists)...)
 }
-func (zapUtil *ZapUtil) Debug(msg string, loggerData dto.LoggerData) {
-	zapUtil.Zap.Debug(msg, zap.Any(loggerData.Key, loggerData.Value))
+func (zapUtil *ZapUtil) Debug(msg string, loggerDataLists ...dto.LoggerData) {
+	zapUtil.Zap.Debug(msg, ExchangeDataToFields(loggerDataLists)...)
 
 }
-func (zapUtil *ZapUtil) Warn(msg string, loggerData dto.LoggerData) {
-	zapUtil.Zap.Warn(msg, zap.Any(loggerData.Key, loggerData.Value))
+func (zapUtil *ZapUtil) Warn(msg string, loggerDataLists ...dto.LoggerData) {
+	zapUtil.Zap.Warn(msg, ExchangeDataToFields(loggerDataLists)...)
+}
+
+func ExchangeDataToFields(loggerDataLists []dto.LoggerData) []zap.Field {
+	fields := make([]zap.Field, 0, 8)
+	for _, data := range loggerDataLists {
+		fields = append(fields, zap.Any(data.Key, data.Value))
+	}
+	return fields
 }
