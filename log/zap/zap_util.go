@@ -30,15 +30,15 @@ func NewZapUtil(config ZapConfig) *ZapUtil {
 	return util
 }
 func (zapUtil *ZapUtil) Error(msg string, loggerData dto.LoggerData) {
-	zapUtil.Zap.Error(msg, zap.Any(loggerData.Key, loggerData.Data))
+	zapUtil.Zap.Error(msg, zap.Any(loggerData.Key, loggerData.Value))
 }
 func (zapUtil *ZapUtil) Info(msg string, loggerData dto.LoggerData) {
-	zapUtil.Zap.Info(msg, zap.Any(loggerData.Key, loggerData.Data))
+	zapUtil.Zap.Info(msg, zap.Any(loggerData.Key, loggerData.Value))
 }
 func (zapUtil *ZapUtil) Debug(msg string, loggerData dto.LoggerData) {
-	zapUtil.Zap.Debug(msg, zap.Any(loggerData.Key, loggerData.Data))
+	zapUtil.Zap.Debug(msg, zap.Any(loggerData.Key, loggerData.Value))
 
 }
 func (zapUtil *ZapUtil) Warn(msg string, loggerData dto.LoggerData) {
-	zapUtil.Zap.Warn(msg, zap.Any(loggerData.Key, loggerData.Data))
+	zapUtil.Zap.Warn(msg, zap.Any(loggerData.Key, loggerData.Value))
 }

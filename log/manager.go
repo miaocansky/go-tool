@@ -1,8 +1,17 @@
 package log
 
+import "github.com/miaocansky/go-tool/log/dto"
+
 type Log struct {
 	defaultName string
 	drivers     Logger
+}
+
+func Ang(key string, value interface{}) dto.LoggerData {
+	return dto.LoggerData{
+		Key:   key,
+		Value: value,
+	}
 }
 
 func NewLog() *Log {
