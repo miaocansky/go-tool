@@ -12,12 +12,12 @@ func (cS *CronServer) AddJob(task *CronTask) cron.FuncJob {
 		cS.taskCount.Add()
 		defer cS.taskCount.Done()
 		msg := fmt.Sprintf("执行任务：(%d)%s [%s]", task.Id, task.Name, task.Spec)
+		result := execute(task)
 		if cS.debug && cS.cronLog != nil {
 			//cS.cronLog.Info(msg)
+			resultMsg := fmt.Sprintf("%s [返回状态: %s 放回说明: %s]", msg, result.Code, result.Msg)
+			cS.cronLog.Info(resultMsg)
 		}
-		result := execute(task)
-		resultMsg := fmt.Sprintf("%s [返回状态: %s 放回说明: %s]", msg, result.Code, result.Msg)
-		cS.cronLog.Info(resultMsg)
 		if task.CallBack != nil {
 			go task.CallBack(result, *task)
 		}
