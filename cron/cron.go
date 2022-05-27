@@ -51,7 +51,7 @@ func NewCronServer(debug bool) *CronServer {
 	}
 	if debug {
 		config := zap.ZapConfig{
-			Director:      "log",
+			Director:      "log/cron",
 			Level:         "info",
 			ShowLine:      false,
 			StacktraceKey: "stacktrace",
