@@ -15,4 +15,4 @@ type ResultExecData struct {
 	Msg  string `json:"msg"`
 }
 
-type CallBackFuc func(data ResultExecData)
+type CallBackFuc func(data ResultExecData, task CronTask)

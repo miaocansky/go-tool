@@ -48,7 +48,8 @@ func TestNewCronComServer(t *testing.T) {
 
 func DoSoothing() CallBackFuc {
 
-	return func(data ResultExecData) {
+	return func(data ResultExecData, task CronTask) {
+		fmt.Println(task.Name)
 		fmt.Println(data.Msg)
 	}
 }
