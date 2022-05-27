@@ -19,7 +19,7 @@ func (cS *CronServer) AddJob(task *CronTask) cron.FuncJob {
 		resultMsg := fmt.Sprintf("%s [返回状态: %s 放回说明: %s]", msg, result.Code, result.Msg)
 		cS.cronLog.Info(resultMsg)
 		if task.CallBack != nil {
-			task.CallBack(result)
+			go task.CallBack(result)
 		}
 
 	}
