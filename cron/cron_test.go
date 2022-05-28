@@ -2,8 +2,8 @@ package cron
 
 import (
 	"fmt"
-	"os/exec"
 	"testing"
+	"time"
 )
 
 func TestNewCronServer(t *testing.T) {
@@ -37,13 +37,23 @@ func TestNewCronServer(t *testing.T) {
 
 }
 
-func TestNewCronComServer(t *testing.T) {
-	cmd := exec.Command("whoami")
-	byteArr, err := cmd.Output()
-	if err != nil {
-		fmt.Println(err)
+func TestCronServer_ExecuteJob(t *testing.T) {
+	cs := NewCronDebugServer()
+	spec2 := "*/6 * * * * ?"
+	task2 := &CronTask{
+		Id:         2,
+		Name:       "测试任务2",
+		Spec:       spec2,
+		Command:    "http://127.0.0.1:8081/public/test/test",
+		Type:       2,
+		HttpMethod: 1,
+		CallBack:   DoSoothing(),
 	}
-	fmt.Println(string(byteArr))
+
+	cs.ExecuteJob(task2)
+
+	time.Sleep(5 * time.Second)
+
 }
 
 func DoSoothing() CallBackFuc {

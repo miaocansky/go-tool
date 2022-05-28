@@ -25,6 +25,20 @@ func (cS *CronServer) AddJob(task *CronTask) cron.FuncJob {
 	}
 
 }
+func (cS *CronServer) ExecuteJob(task *CronTask) {
+
+	msg := fmt.Sprintf("执行任务：(%d)%s [%s]", task.Id, task.Name, task.Spec)
+	result := execute(task)
+	if cS.debug && cS.cronLog != nil {
+		//cS.cronLog.Info(msg)
+		resultMsg := fmt.Sprintf("%s [返回状态: %s 放回说明: %s]", msg, result.Code, result.Msg)
+		cS.cronLog.Info(resultMsg)
+	}
+	if task.CallBack != nil {
+		go task.CallBack(result, *task)
+	}
+
+}
 
 func execute(task *CronTask) (result ResultExecData) {
 	if task.Type == 1 {

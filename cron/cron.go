@@ -11,16 +11,21 @@ import (
 type Croner interface {
 	getJobId(id int64) string
 
+	// 开始
 	Start()
-
+	// 停止
 	Stop()
 
+	// 添加任务
 	AddTask(task *CronTask)
 
 	// RemoveTask 删除定时任务
 	RemoveTask(taskId int64)
 
+	// 添加工作
 	AddJob(task *CronTask) cron.FuncJob
+	// 外放执行脚本
+	ExecuteJob(task *CronTask)
 }
 
 type CronServer struct {
