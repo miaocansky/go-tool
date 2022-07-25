@@ -26,6 +26,8 @@ type Croner interface {
 	AddJob(task *CronTask) cron.FuncJob
 	// 外放执行脚本
 	ExecuteJob(task *CronTask)
+
+	GetAllTasks()
 }
 
 type CronServer struct {
