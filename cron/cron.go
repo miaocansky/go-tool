@@ -26,7 +26,7 @@ type Croner interface {
 	AddJob(task *CronTask) cron.FuncJob
 	// 外放执行脚本
 	ExecuteJob(task *CronTask)
-
+	// 获取所有的任务
 	GetAllTasks()
 }
 
