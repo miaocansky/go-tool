@@ -185,9 +185,11 @@ func policyStringsToListsStruct(policyStringsLists [][]string) []dto.CasbinInfoD
 		for _, policyStrings := range policyStringsLists {
 			c1 := dto.CasbinInfoDto{}
 			//list[0]
-			c1.Method = policyStrings[2]
 			c1.Path = policyStrings[1]
 			c1.AuthorityId = policyStrings[0]
+			if len(policyStrings) > 2 {
+				c1.Method = policyStrings[2]
+			}
 
 			policyLists = append(policyLists, c1)
 		}
