@@ -88,9 +88,9 @@ func (casbinUtil *CasbinUtil) StopAutoLoadPolicy() {
 //  @param act 请求方法 POST GET
 //  @return bool  是否有权限
 //
-func (casbinUtil *CasbinUtil) Enforce(authorityId, obj, act string) bool {
+func (casbinUtil *CasbinUtil) Enforce(rvals ...interface{}) bool {
 	//casbinUtil.GetEnforcer()
-	isEnforce, err := casbinUtil.SyncedEnforcer.Enforce(authorityId, obj, act)
+	isEnforce, err := casbinUtil.SyncedEnforcer.Enforce(rvals...)
 	if err != nil {
 		return false
 	}
