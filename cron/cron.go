@@ -9,28 +9,30 @@ import (
 )
 
 type Croner interface {
+	// 任务id（key）
 	getJobId(id int64) string
-
 	// 开始
 	Start()
 	// 停止
 	Stop()
-
 	// 添加任务
 	AddTask(task *CronTask)
-
-	// RemoveTask 删除定时任务
-	RemoveTask(taskId int64)
-
+	// RemoveTask 删除任务如果该任务没有在执行中 则返回true并且删除任务  如果执行中则返回false 进行延时删除任务（等该任务都已经执行结束以后 删除改任务 并且该任务不会再添加执行 ）
+	RemoveTask(taskId int64) bool
 	// 添加工作
 	AddJob(task *CronTask) cron.FuncJob
 	// 外放执行脚本
 	ExecuteJob(task *CronTask)
-	// 获取所有的任务
-	GetAllTasks()
+	// 获取所有的任务Ids
+	GetAllTaskIds() []int64
+	// 获取所有的任务数据包含每个执行状态
+	GetAllTasksDetailList() map[string]CronTask
+	// 获取cron
+	GetCron() *cron.Cron
 }
 
 type CronServer struct {
+	taskMaps  sync.Map
 	cronLog   log.Logger
 	debug     bool
 	pfx       string
@@ -81,4 +83,7 @@ func (cS *CronServer) getJobId(id int64) string {
 	idStr := strconv.FormatInt(id, 10)
 	return cS.pfx + idStr
 
+}
+func (cS *CronServer) GetCron() *cron.Cron {
+	return cS.cron
 }
