@@ -26,7 +26,14 @@ func (cS *CronServer) GetAllTasksDetailList() map[string]CronTask {
 		tasks[key] = *task
 		return true
 	})
-
 	return tasks
-
+}
+func (cS *CronServer) GetTaskDetail(id int64) *CronTask {
+	key := cS.getJobId(id)
+	val, ok := cS.taskMaps.Load(key)
+	if !ok {
+		return nil
+	}
+	task := val.(*CronTask)
+	return task
 }

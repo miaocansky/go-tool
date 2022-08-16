@@ -19,7 +19,7 @@ type Croner interface {
 	AddTask(task *CronTask)
 	// RemoveTask 删除任务如果该任务没有在执行中 则返回true并且删除任务  如果执行中则返回false 进行延时删除任务（等该任务都已经执行结束以后 删除改任务 并且该任务不会再添加执行 ）
 	RemoveTask(taskId int64) bool
-	// 添加工作
+	// 添加工作 内容调用
 	AddJob(task *CronTask) cron.FuncJob
 	// 外放执行脚本
 	ExecuteJob(task *CronTask)
@@ -27,6 +27,8 @@ type Croner interface {
 	GetAllTaskIds() []int64
 	// 获取所有的任务数据包含每个执行状态
 	GetAllTasksDetailList() map[string]CronTask
+	// 获取任务详情包括执行状态
+	GetTaskDetail(id int64) *CronTask
 	// 获取cron
 	GetCron() *cron.Cron
 }
